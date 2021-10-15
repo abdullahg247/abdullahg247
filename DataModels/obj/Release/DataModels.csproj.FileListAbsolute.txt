@@ -1,0 +1,4 @@
+D:\MySampleProjects\ParserDesktop\ParserDesktopApp\DataModels\bin\Release\DataModels.dll
+D:\MySampleProjects\ParserDesktop\ParserDesktopApp\DataModels\bin\Release\DataModels.pdb
+D:\MySampleProjects\ParserDesktop\ParserDesktopApp\DataModels\obj\Release\DataModels.dll
+D:\MySampleProjects\ParserDesktop\ParserDesktopApp\DataModels\obj\Release\DataModels.pdb

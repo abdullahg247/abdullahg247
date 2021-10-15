@@ -1,0 +1,10 @@
+D:\MySampleProjects\ParserDesktop\ParserDesktopApp\DataModels\bin\Debug\DataModels.dll
+D:\MySampleProjects\ParserDesktop\ParserDesktopApp\DataModels\bin\Debug\DataModels.pdb
+D:\MySampleProjects\ParserDesktop\ParserDesktopApp\DataModels\obj\Debug\DataModels.dll
+D:\MySampleProjects\ParserDesktop\ParserDesktopApp\DataModels\obj\Debug\DataModels.pdb
+D:\MySampleProjects\ParserDesktop\ParserDesktopApp\DataModels\obj\Debug\DataModels.csprojResolveAssemblyReference.cache
+E:\Utilities\TestExcelWithRegex\DataModels\bin\Debug\DataModels.dll
+E:\Utilities\TestExcelWithRegex\DataModels\bin\Debug\DataModels.pdb
+E:\Utilities\TestExcelWithRegex\DataModels\obj\Debug\DataModels.csprojResolveAssemblyReference.cache
+E:\Utilities\TestExcelWithRegex\DataModels\obj\Debug\DataModels.dll
+E:\Utilities\TestExcelWithRegex\DataModels\obj\Debug\DataModels.pdb

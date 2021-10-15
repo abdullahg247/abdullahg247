@@ -1,0 +1,124 @@
+﻿<Window x:Class="ParserDesktopApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ParserDesktopApp"
+        mc:Ignorable="d"
+        WindowState="Maximized"
+        Title="Test Regex from Excel Sheet -- Designed and Developed by Abdullah Asif" Height="350" Width="525">
+
+    <Grid IsEnabled="{Binding Path=IsThreadNotRunning}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition  Width="Auto"/>
+            <ColumnDefinition  Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition  Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Label Name="LblFilePath" Grid.Row="0" Grid.Column="0" Content="File Path" />
+        <TextBox Name="TbxFilePath" Background="AliceBlue" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" 
+                   Grid.ColumnSpan="4" Text="{Binding Path=FilePath, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  />
+        <Button Name="BtnImportFromPath" Margin="5,5,5,0"  Content="Import Data" Grid.Row="0" Grid.Column="5"  VerticalAlignment="Bottom" Width="Auto" Click="BtnImportFromPath_Click"/>
+        <Label Name="LblRegex" Content="Regex" Grid.Row="1" Grid.Column="0" />
+        <TextBox Name="TbxRegex" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" 
+                 BorderBrush="#932BE2" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" MaxHeight="200" 
+                 Grid.ColumnSpan="4" Height="50" Text="{Binding Path=Patteren, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+        <Button Name="BtnParse" Margin="5,5,5,0" Content="Parse" Grid.Row="1" Grid.Column="5" VerticalAlignment="Bottom" Width="Auto" Click="BtnParse_OnClick"/>
+        <ListView Margin="0,10,0,0" HorizontalAlignment="Stretch" Grid.ColumnSpan="6" Grid.Column="0"
+                      VerticalAlignment="Stretch" Name="ListView1" Grid.Row="2" ItemsSource="{Binding Path=RegexDataCollection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <ListView.View>
+                <GridView x:Name="GvData" AllowsColumnReorder="True" >
+                    <GridViewColumn  Width="150"   >
+                        <GridViewColumnHeader>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                <Label Content="Document ID: " />
+                                <TextBox Name="tbxFilter" Width="60" TextChanged="tbxFilter_TextChanged"/>
+                            </StackPanel>
+                        </GridViewColumnHeader>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Name="TbxDocId" MinWidth="65" Text="{Binding Path=DocumentId, Mode=TwoWay}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn   x:Name="ColText" Width="455" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox x:Name="TbxText" AcceptsReturn="True" AcceptsTab="True" MinHeight="70" MaxHeight="150"  TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" HorizontalAlignment="Stretch" Text="{Binding Path=Text, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" MinWidth="100"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header=" Custom Regex " Width="210" x:Name="ColCustomRegexdValue" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox x:Name="TxtCustomRegex" MaxHeight="150" AcceptsReturn="True" AcceptsTab="True" Width="190" TextWrapping="Wrap"  VerticalScrollBarVisibility="Visible" HorizontalAlignment="Stretch" Text="{Binding Path=CustomPatteren, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" MinWidth="100"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn  Width="390" x:Name="ColParsedValue" >
+                        <GridViewColumnHeader>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Parsed Value"/>
+                                <ComboBox Name="cmbFoundNotFound" SelectionChanged="cmbFoundNotFound_SelectionChanged">
+                                    <ComboBoxItem Content="All" IsSelected="True" />
+                                    <ComboBoxItem Content="Found" />
+                                    <ComboBoxItem Content="Not Found" />
+                                </ComboBox>
+                            </StackPanel>
+                        </GridViewColumnHeader>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Vertical" >
+                                    <ListView Width="360" MaxHeight="150" ItemsSource="{Binding Path=Matches, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBox x:Name="TbxParsedValue"  AcceptsReturn="True" AcceptsTab="True" Width="350" MaxHeight="100" TextWrapping="Wrap"  VerticalScrollBarVisibility="Visible" HorizontalAlignment="Stretch" Text="{Binding Path=Value, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" MinWidth="100"/>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Total Matches:" TextBlock.FontWeight="Bold" VerticalAlignment="Center"/>
+                                        <TextBlock VerticalAlignment="Center" Name="TbxMatchCount" FontWeight="Black" Text="{Binding Path=Matches.Count, Mode=OneWay}"/>
+                                        <Button Name="btnDetails" Content="Details" Height="Auto" Width="Auto" Margin="10,3,0,0" HorizontalAlignment="Left" Click="btnDetails_Click" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header=" Time Consumed (ms) " x:Name="ColTimeConsumed" DisplayMemberBinding="{Binding Path=TimeSpan.TotalMilliseconds, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <GridViewColumn x:Name="ColAddRemove">
+                        <GridViewColumnHeader>
+                            <Button Content="+" x:Name="BtnAdd" ToolTip="Add" Click="BtnAdd_OnClick" Width="60" />
+                        </GridViewColumnHeader>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="-" x:Name="BtnRemove" ToolTip="Remove" Click="BtnRemove_OnClick" Width="60" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Label TextBlock.FontWeight="Bold" Content="Total Records:" Grid.Row="3" Grid.Column="0" Name="LblCount" />
+        <TextBlock FontWeight="Black" Name="TbCount" Grid.Row="3" Grid.Column="1" Text="{Binding Path=RegexDataCollection.Count, Mode=OneWay}" VerticalAlignment="Center"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="2">
+            <Label TextBlock.FontWeight="Bold" Content="[Found:" Name="LblFound" />
+            <TextBlock FontWeight="Black" Name="TbFound" Text="{Binding Path=FoundCount, Mode=OneWay}" VerticalAlignment="Center"/>
+            <Label TextBlock.FontWeight="Bold" Content="]" />
+            <Label TextBlock.FontWeight="Bold" Margin="5,0,0,0" Content="[Not Found:" Name="LblNotFound" />
+            <TextBlock FontWeight="Black" Name="TbNotFound"  Text="{Binding Path=NotFoundCount , Mode=OneWay}" VerticalAlignment="Center"/>
+            <Label TextBlock.FontWeight="Bold" Content="]" />
+        </StackPanel>
+        <Label TextBlock.FontWeight="Bold" Content="Total Time Consumed (seconds)" Grid.Row="3" Grid.Column="4" />
+        <TextBlock FontWeight="Black" Name="TbTotalTimeConsumed" Grid.Row="3" Grid.Column="5" Text="{Binding Path=TotalSecs}" VerticalAlignment="Center"/>
+        <Button Name="btnCopyFilteredIds" Content="Copy Filtered Ids" Click="btnCopyFilteredIds_Click" Grid.Row="3" Grid.Column="3" HorizontalAlignment="Center"/>
+    </Grid>
+</Window>

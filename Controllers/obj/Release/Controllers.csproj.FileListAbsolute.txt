@@ -1,0 +1,7 @@
+D:\MySampleProjects\ParserDesktop\ParserDesktopApp\Controllers\bin\Release\Controllers.dll
+D:\MySampleProjects\ParserDesktop\ParserDesktopApp\Controllers\bin\Release\Controllers.pdb
+D:\MySampleProjects\ParserDesktop\ParserDesktopApp\Controllers\bin\Release\DataModels.dll
+D:\MySampleProjects\ParserDesktop\ParserDesktopApp\Controllers\bin\Release\DataModels.pdb
+D:\MySampleProjects\ParserDesktop\ParserDesktopApp\Controllers\obj\Release\Controllers.csprojResolveAssemblyReference.cache
+D:\MySampleProjects\ParserDesktop\ParserDesktopApp\Controllers\obj\Release\Controllers.dll
+D:\MySampleProjects\ParserDesktop\ParserDesktopApp\Controllers\obj\Release\Controllers.pdb
