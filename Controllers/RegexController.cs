@@ -261,8 +261,11 @@ namespace Controllers
                         var sw = Stopwatch.StartNew();
                         try
                         {
-                            item.Regex = new Regex(ptrn, RegexOptions.IgnoreCase);
-                            matchCollection = item.Regex.Matches(item.Text);
+                            if (!string.IsNullOrEmpty(item.Text))
+                            {
+                                item.Regex = new Regex(ptrn, RegexOptions.IgnoreCase);
+                                matchCollection = item.Regex.Matches(item.Text);
+                            }
                         }
                         catch (Exception ex)
                         {
