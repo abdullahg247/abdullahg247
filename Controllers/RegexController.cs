@@ -8,13 +8,15 @@ using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Controllers.Annotations;
 using DataModels;
 using Excel = Microsoft.Office.Interop.Excel;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Controllers
 {
@@ -184,7 +186,7 @@ namespace Controllers
             if (string.IsNullOrEmpty(FilePath) && string.IsNullOrWhiteSpace(FilePath))
             {
                 var choofdlog = new OpenFileDialog();
-                choofdlog.Filter = "Excel files (*.xls)|*.xls| Excel (*.xlsx)|*.xlsx";
+                choofdlog.Filter = "Excel files Excel (*.xlsx)|*.xlsx|(*.xls)|*.xls";
                 choofdlog.FilterIndex = 1;
                 choofdlog.Multiselect = true;
                 if (choofdlog.ShowDialog() == DialogResult.OK)
@@ -199,41 +201,70 @@ namespace Controllers
                     try
                     {
                         IsThreadNotRunning = false;
-                        var xlApp = new Excel.Application();
-                        var xlWorkbook = xlApp.Workbooks.Open(FilePath);
-                        Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
-                        var xlRange = xlWorksheet.UsedRange;
-                        var rowCount = xlRange.Rows.Count;
-                        var colCount = 2;
-                        RegexDataCollection = new ObservableCollection<RegexData>();
-                        for (var i = 1; i <= rowCount; i++)
+                        //var xlApp = new Excel.Application();
+                        //var xlWorkbook = xlApp.Workbooks.Open(FilePath);
+                        using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(FilePath, false))
                         {
-                            var regexData = new RegexData();
-                            for (var j = 1; j <= colCount; j++)
+                            WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+                            WorksheetPart worksheetPart = workbookPart.WorksheetParts.First();
+                            SheetData sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
+
+                            //Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
+                            var rows = sheetData.Descendants<Row>();
+                            var rowCount = rows.Count();
+                            //var colCount = 2;
+                            RegexDataCollection = new ObservableCollection<RegexData>();
+                            #region commented
+                            foreach (var row in rows)
                             {
-                                if (xlRange.Cells[i, j] != null && xlRange.Cells[i, j].Value2 != null)
+                                var regexData = new RegexData();
+                                int celId = 0;
+                                foreach (Cell cell in row.Descendants<Cell>())
                                 {
-                                    if (j % 2 == 0)
+
+                                    if (celId == 0)
                                     {
-                                        regexData.Text = xlRange.Cells[i, j].Value2.ToString();
+                                        regexData.DocumentId = GetValue(spreadsheetDocument, cell);
                                     }
                                     else
                                     {
-                                        regexData.DocumentId = Convert.ToInt32(xlRange.Cells[i, j].Value2.ToString());
+                                        regexData.Text += "" + GetValue(spreadsheetDocument, cell);
                                     }
+                                    celId++;
                                 }
-
+                                methodFromUi(regexData);
                             }
-                            methodFromUi(regexData);
+                            //for (var i = 1; i <= rowCount; i++)
+                            //{
+                            //    var regexData = new RegexData();
+                            //    for (var j = 1; j <= colCount; j++)
+                            //    {
+                            //        rows.ElementAt(i)
+                            //        if (rows.ElementAt(i).Cells[i, j] != null && xlRange.Cells[i, j].Value2 != null)
+                            //        {
+                            //            if (j % 2 == 0)
+                            //            {
+                            //                regexData.Text = xlRange.Cells[i, j].Value2.ToString();
+                            //            }
+                            //            else
+                            //            {
+                            //                regexData.DocumentId = Convert.ToInt32(xlRange.Cells[i, j].Value2.ToString());
+                            //            }
+                            //        }
+
+                            //    }
+                            //    methodFromUi(regexData);
+                            //}
+                            #endregion
+                            GC.Collect();
+                            GC.WaitForPendingFinalizers();
+                            //Marshal.ReleaseComObject(xlRange);
+                            //Marshal.ReleaseComObject(xlWorksheet);
+                            //xlWorkbook.Close();
+                            //Marshal.ReleaseComObject(xlWorkbook);
+                            // xlApp.Quit();
+                            // Marshal.ReleaseComObject(xlApp);
                         }
-                        GC.Collect();
-                        GC.WaitForPendingFinalizers();
-                        Marshal.ReleaseComObject(xlRange);
-                        Marshal.ReleaseComObject(xlWorksheet);
-                        xlWorkbook.Close();
-                        Marshal.ReleaseComObject(xlWorkbook);
-                        xlApp.Quit();
-                        Marshal.ReleaseComObject(xlApp);
                     }
                     catch (Exception ex)
                     {
@@ -245,7 +276,15 @@ namespace Controllers
             });
 
         }
-
+        private string GetValue(SpreadsheetDocument doc, Cell cell)
+        {
+            string value = cell.CellValue.InnerText;
+            if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
+            {
+                return doc.WorkbookPart.SharedStringTablePart.SharedStringTable.ChildElements.GetItem(int.Parse(value)).InnerText;
+            }
+            return value;
+        }
         public async void ParseData()
         {
             await Task.Run(() =>

@@ -13,9 +13,9 @@ namespace DataModels
 {
     public class RegexData : INotifyPropertyChanged, IEntity
     {
-        private int _documentId;
+        private string _documentId;
 
-        public int DocumentId
+        public string DocumentId
         {
             get => _documentId;
             set
